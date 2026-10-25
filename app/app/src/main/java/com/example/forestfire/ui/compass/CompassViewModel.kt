@@ -37,7 +37,6 @@ data class CompassUiState(
     val bearingText: String? = null,
     /** "Fire is 1.3 km to the north-east", for TalkBack. */
     val spokenDirection: String? = null,
-    /** The latest fresh GPS fix, for the map; null until one exists. */
     val waitingForGps: Boolean = false,
     val headingStatus: HeadingStatus = HeadingStatus.Waiting,
     val needsCalibration: Boolean = false,

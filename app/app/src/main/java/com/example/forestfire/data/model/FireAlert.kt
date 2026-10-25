@@ -16,6 +16,6 @@ data class FireAlert(
 sealed interface AlertMessage {
     data class Active(val alert: FireAlert) : AlertMessage
 
-    /** The backend ended the alarm. [ts] is null for an empty payload. */
-    data class Cleared(val ts: Long?) : AlertMessage
+    /** The backend ended the alarm. */
+    data object Cleared : AlertMessage
 }

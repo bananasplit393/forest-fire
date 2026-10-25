@@ -18,3 +18,4 @@ local.properties
 /dev-broker/certs/*.key
 /dev-broker/certs/*.csr
 /dev-broker/certs/*.srl
+.idea/

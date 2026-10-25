@@ -3,8 +3,6 @@ agp = "9.4.1"
 kotlin = "2.2.10"
 coreKtx = "1.19.1"
 junit = "4.13.2"
-junitVersion = "1.3.0"
-espressoCore = "3.7.0"
 activityCompose = "1.10.1"
 lifecycle = "2.9.2"
 composeBom = "2025.08.00"
@@ -36,8 +34,6 @@ robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
-androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

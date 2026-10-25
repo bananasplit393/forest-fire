@@ -43,13 +43,12 @@ class AlarmPolicyTest {
 
     @Test
     fun clearWhileAlarmActiveIsClear() {
-        assertEquals(Clear, AlarmPolicy.decide(alert, null, Cleared(120)))
-        assertEquals(Clear, AlarmPolicy.decide(alert, null, Cleared(null)))
+        assertEquals(Clear, AlarmPolicy.decide(alert, null, Cleared))
     }
 
     @Test
     fun clearWithoutActiveAlarmIsIgnored() {
-        assertEquals(Ignore, AlarmPolicy.decide(null, null, Cleared(120)))
+        assertEquals(Ignore, AlarmPolicy.decide(null, null, Cleared))
     }
 
     @Test

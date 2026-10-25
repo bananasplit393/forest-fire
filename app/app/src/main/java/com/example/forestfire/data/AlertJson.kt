@@ -12,11 +12,11 @@ object AlertJson {
     /** Returns null if the payload is not a valid alert; an empty payload means "cleared". */
     fun parse(payload: ByteArray): AlertMessage? {
         val text = payload.toString(Charsets.UTF_8).trim()
-        if (text.isEmpty()) return AlertMessage.Cleared(ts = null)
+        if (text.isEmpty()) return AlertMessage.Cleared
         return try {
             val json = JSONObject(text)
             if (!json.getBoolean("active")) {
-                AlertMessage.Cleared(ts = if (json.has("ts")) json.getLong("ts") else null)
+                AlertMessage.Cleared
             } else {
                 val alert = FireAlert(
                     risk = json.getDouble("risk"),

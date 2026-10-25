@@ -20,18 +20,18 @@ class AlertJsonTest {
 
     @Test
     fun parsesClearWithTimestamp() {
-        assertEquals(AlertMessage.Cleared(1760871000), parse("""{"active":false,"ts":1760871000}"""))
+        assertEquals(AlertMessage.Cleared, parse("""{"active":false,"ts":1760871000}"""))
     }
 
     @Test
     fun parsesClearWithoutTimestamp() {
-        assertEquals(AlertMessage.Cleared(null), parse("""{"active":false}"""))
+        assertEquals(AlertMessage.Cleared, parse("""{"active":false}"""))
     }
 
     @Test
     fun emptyPayloadIsClear() {
-        assertEquals(AlertMessage.Cleared(null), AlertJson.parse(ByteArray(0)))
-        assertEquals(AlertMessage.Cleared(null), parse("  \n"))
+        assertEquals(AlertMessage.Cleared, AlertJson.parse(ByteArray(0)))
+        assertEquals(AlertMessage.Cleared, parse("  \n"))
     }
 
     @Test

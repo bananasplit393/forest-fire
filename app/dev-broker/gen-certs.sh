@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Generates a development CA, a broker certificate signed by it, and a mosquitto.conf using them.
+# Generates a development CA and a broker certificate signed by it.
 # Usage: dev-broker/gen-certs.sh [LAN_IP]
 #   LAN_IP: your computer's Wi-Fi address, so a real phone can connect (optional).
 # Re-running keeps the existing CA (so the app's bundled ca.crt stays valid) and re-issues the broker cert.
@@ -28,15 +28,6 @@ EOT
 openssl x509 -req -in certs/server.csr -CA certs/ca.crt -CAkey certs/ca.key -CAcreateserial \
   -out certs/server.crt -days 825 -sha256 -extfile certs/server.ext
 chmod 644 certs/server.key   # mosquitto may run as a different user
-
-DIR="$(pwd)"
-cat > mosquitto.conf <<EOT
-listener 8883
-cafile $DIR/certs/ca.crt
-certfile $DIR/certs/server.crt
-keyfile $DIR/certs/server.key
-allow_anonymous true
-EOT
 
 echo "Broker cert SAN: $SAN"
 echo "Next: cp dev-broker/certs/ca.crt app/src/main/res/raw/ca.crt"
