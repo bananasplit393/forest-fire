@@ -1,0 +1,16 @@
+{
+  "name": "forest-fire-producers",
+  "private": true,
+  "scripts": {
+    "start": "tsx main.ts",
+    "send": "tsx send.ts"
+  },
+  "dependencies": {
+    "coap": "^1.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}
