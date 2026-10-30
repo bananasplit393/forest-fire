@@ -34,3 +34,11 @@ pm25: Concentration of particle matter smaller than 2.5µm
 lat: latidude, double
 lon: longitude, double
 
+Since the data collection team assembled all sensors into one device we will do the same making one type of producer
+
+## Producer interface
+
+`interface/sensor.ts` defines the shared measurement and reading types along
+with the `SensorProducer` contract. The composite `Sensor` stores configured
+measurements, while `main/produce.ts` creates a reading and adds its UTC Unix
+timestamp in seconds. Omit unavailable measurements rather than sending zero.
