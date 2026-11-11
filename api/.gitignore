@@ -1,0 +1,12 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# lokale hemmeligheder
+.env
+
+# IDE
+*.user
+.vs/
+.vscode/
+.idea/
