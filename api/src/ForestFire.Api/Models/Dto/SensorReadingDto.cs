@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 public class CreateSensorReadingDto
 {
+    // sensor-noden. Over MQTT tages den fra topic'et sensors/{nodeId}/data
+    public string? Node { get; set; }
+
     public long Ts { get; set; }
 
     public double? Temp { get; set; }
@@ -17,6 +20,7 @@ public class CreateSensorReadingDto
 public class SensorReadingDto
 {
     public Guid Id { get; set; }
+    public string? Node { get; set; }
     public long Ts { get; set; }
     public DateTime Timestamp { get; set; }
 

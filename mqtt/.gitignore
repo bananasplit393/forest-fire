@@ -1,0 +1,9 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# IDE
+*.user
+.vs/
+.vscode/
+.idea/

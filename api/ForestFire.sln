@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForestFire.Api", "src\ForestFire.Api\ForestFire.Api.csproj", "{6A9FFD6D-98AE-47F1-A2CE-4DE155FED840}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ForestFire.Mqtt", "..\mqtt\ForestFire.Mqtt.csproj", "{5A6ED39F-D64F-4316-9B70-0F2F50272E25}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,18 @@ Global
 		{6A9FFD6D-98AE-47F1-A2CE-4DE155FED840}.Release|x64.Build.0 = Release|Any CPU
 		{6A9FFD6D-98AE-47F1-A2CE-4DE155FED840}.Release|x86.ActiveCfg = Release|Any CPU
 		{6A9FFD6D-98AE-47F1-A2CE-4DE155FED840}.Release|x86.Build.0 = Release|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Debug|x64.Build.0 = Debug|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Debug|x86.Build.0 = Debug|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Release|x64.ActiveCfg = Release|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Release|x64.Build.0 = Release|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Release|x86.ActiveCfg = Release|Any CPU
+		{5A6ED39F-D64F-4316-9B70-0F2F50272E25}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

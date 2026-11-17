@@ -9,6 +9,7 @@ namespace ForestFire.Api.Controllers;
 public class ReadingsController(SensorReadingService sensorReadingService) : ControllerBase
 {
 
+    // mqtt-servicen sender målingerne fra sensors/+/data hertil og bruger isFire i svaret til at sende FireAlert
     [HttpPost]
     public async Task<ActionResult<SensorReadingDto>> Create(CreateSensorReadingDto dto)
     {

@@ -20,6 +20,7 @@ public class SensorReadingService
         var reading = new SensorReadingModel
         {
             Id = Guid.NewGuid(),
+            NodeId = dto.Node,
             Timestamp = DateTimeOffset.FromUnixTimeSeconds(dto.Ts).UtcDateTime,
             Temp = dto.Temp,
             Humidity = dto.Humidity,
@@ -79,6 +80,7 @@ public class SensorReadingService
         return new SensorReadingDto
         {
             Id = reading.Id,
+            Node = reading.NodeId,
             Ts = new DateTimeOffset(DateTime.SpecifyKind(reading.Timestamp, DateTimeKind.Utc)).ToUnixTimeSeconds(),
             Timestamp = reading.Timestamp,
             Temp = reading.Temp,

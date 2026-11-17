@@ -46,6 +46,9 @@ namespace ForestFire.Api.Migrations
                     b.Property<double?>("Lon")
                         .HasColumnType("double precision");
 
+                    b.Property<string>("NodeId")
+                        .HasColumnType("text");
+
                     b.Property<double?>("Pm10")
                         .HasColumnType("double precision");
 

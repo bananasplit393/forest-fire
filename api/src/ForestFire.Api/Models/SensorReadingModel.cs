@@ -4,6 +4,9 @@ public class SensorReadingModel
 {
     public Guid Id { get; set; }
 
+    // sensor-noden målingen kommer fra (sensors/{nodeId}/data)
+    public string? NodeId { get; set; }
+
     public DateTime Timestamp { get; set; }
 
     public double? Temp { get; set; }
