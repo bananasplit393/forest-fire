@@ -12,6 +12,9 @@ builder.Services.AddScoped<SensorReadingService>();
 
 builder.Services.AddSingleton<RiskModelService>();
 
+// seneste position pr. brandmand, sendes hertil af mqtt-servicen
+builder.Services.AddSingleton<FirefighterLocationService>();
+
 builder.Services.AddControllers()
     .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddOpenApi();
