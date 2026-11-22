@@ -1,0 +1,6 @@
+<resources>
+    <!-- Compose draws everything; this only removes the action bar and sets the launch background. -->
+    <style name="Theme.ForestFire" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">#C9A65A</item>
+    </style>
+</resources>
