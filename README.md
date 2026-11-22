@@ -1,23 +1,25 @@
 # Forest Fire
 
 ```
-producers ──CoAP──▶ coap-server ──MQTT──▶ Mosquitto ──▶ API (model.onnx + Postgres)
-                                              ▲   │                         │
-                         mobilapp (ws:9001) ──┘   └── alerts/{node} ◀───────┘ ved brand
-                                                         frontend ──GET──▶ API
+producers ──CoAP──▶ coap-server ──MQTT──▶ Mosquitto ◀──MQTT──▶ API (model.onnx + Postgres)
+                                            │   ▲
+     brandmandsapp ◀── alerts/{node} ───────┘   └── firefighters/{id}/location ── brandmandsapp
+     dashboard ◀── live MQTT (ws:9001) + REST (8081)
 ```
 
 | Mappe | Hvad |
 |---|---|
-| `producers/` | Simulerede sensor-noder (TypeScript), sender målinger med CoAP |
-| `coap-server/` | Tager imod CoAP og publicerer på `sensors/{nodeId}/data` |
-| `mqtt/` | Mosquitto-config (`mosquitto.conf`). Den tidligere separate .NET-service er nu flyttet ind i `api/` |
-| `api/` | ASP.NET Core API, kører risikomodellen og gemmer målingerne. Her ligger `docker-compose.yml` |
-| `frontend/` | Dashboard (Vite + React): tabel og kort over målinger og brandmænd |
-| `app/` | Brandmandsappen (Expo / React Native): viser alarmer og sender GPS-position |
+| `producers/` | Simulerede sensor-noder (TypeScript), sender målinger med CoAP. Ca. 5 % af målingerne er en brand |
+| `coap-server/` | Tager imod CoAP og publicerer på `sensors/{node}/data` |
+| `mqtt/` | Mosquitto-config (`mosquitto.conf`) |
+| `api/` | ASP.NET Core API. Lytter på MQTT, kører risikomodellen, gemmer i Postgres og publicerer `alerts/{node}` ved brand. Her ligger `docker-compose.yml` |
+| `frontend/` | Dashboard (Vite + React + Leaflet): kort og tabel over målinger, alarmer og brandmænd |
+| `app/` | Brandmandsappen (Kotlin, Android): alarm, kompas mod branden og sender GPS-position |
 | `smoke_model/` | Træning og eksport af modellen |
 
-## Kør hele systemet
+## Start det hele
+
+Kræver Docker (fx Rancher Desktop) og Node.js. Til appen: Android Studio eller Android SDK + JDK 21.
 
 ```bash
 # 1. backend + dashboard (Postgres, Mosquitto, coap-server, API, frontend)
@@ -31,21 +33,35 @@ npm run send
 ```
 
 - Dashboard: http://localhost:3000
-- API: http://localhost:8081 (fx http://localhost:8081/readings)
+- API: http://localhost:8081 (fx `/readings` og `/firefighters`)
 - MQTT: `localhost:1883` og websockets på `localhost:9001`, login `forestfire` / `mqtt-password`
 - CoAP: `udp://localhost:5683`
 
-### Mobilappen
+Stop med `docker compose down` i `api/`.
 
-```bash
-cd app
-npm install
-npx expo start
-```
+## Brandmandsappen
 
-Skriv din pc's IP i `app/config.ts` (telefonen kan ikke bruge `localhost`), og åbn appen med Expo Go. Telefon og pc skal være på samme wifi.
+Appen forbinder til Mosquitto på port 1883. Telefonen kan ikke bruge `localhost`, så den skal have pc'ens IP.
 
-### Frontend uden Docker
+1. **Netværk.** Telefon og pc skal være på samme netværk. Skole-wifi (eduroam) blokerer ofte trafik mellem enheder, så brug et hotspot:
+   - *Pc'en laver hotspottet* (Windows: Indstillinger → Netværk → Mobilt hotspot). Pc'en har så altid `192.168.137.1`, som er appens standard, så der skal ikke rettes noget.
+   - *Telefonen laver hotspottet*, og pc'en forbinder til det. Find pc'ens IP med `ipconfig` (IPv4 under Wi-Fi), og skriv den som host i appens indstillinger.
+2. **Firewall.** Åbn port 1883 på pc'en (PowerShell som administrator):
+   ```powershell
+   New-NetFirewallRule -DisplayName "Forest Fire MQTT 1883" -Direction Inbound -Protocol TCP -LocalPort 1883 -Action Allow
+   ```
+3. **Byg og installer.** Åbn `app/` i Android Studio og tryk Run, eller:
+   ```bash
+   cd app
+   ./gradlew assembleDebug      # Windows: gradlew.bat assembleDebug
+   adb install -r app/build/outputs/apk/debug/app-debug.apk
+   ```
+   APK'en kan også bare kopieres over på telefonen og åbnes.
+4. **Indstillinger i appen.** Zone er skoven, appen skal følge: `rold-skov`, `gribskov`, `klosterheden-plantage`, `risskov` eller `hasle-skov`. Host er pc'ens IP, port `1883`. Tryk så "on duty".
+
+Ved brand i den valgte skov får appen en alarm med pil mod branden, og brandmandens position vises på dashboardet.
+
+### Dashboard uden Docker
 
 ```bash
 cd frontend
