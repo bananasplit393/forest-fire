@@ -4,7 +4,7 @@
 producers ──CoAP──▶ coap-server ──MQTT──▶ Mosquitto ◀──MQTT──▶ API (model.onnx + Postgres)
                                             │   ▲
      brandmandsapp ◀── alerts/{node} ───────┘   └── firefighters/{id}/location ── brandmandsapp
-     dashboard ◀── live MQTT (ws:9001) + REST (8081)
+     dashboard ◀── REST (8081), poller hvert 3. sekund
 ```
 
 | Mappe | Hvad |
@@ -34,7 +34,7 @@ npm run send
 
 - Dashboard: http://localhost:3000
 - API: http://localhost:8081 (fx `/readings` og `/firefighters`)
-- MQTT: `localhost:1883` og websockets på `localhost:9001`, login `forestfire` / `mqtt-password`
+- MQTT: `localhost:1883`, login `forestfire` / `mqtt-password`
 - CoAP: `udp://localhost:5683`
 
 Stop med `docker compose down` i `api/`.
