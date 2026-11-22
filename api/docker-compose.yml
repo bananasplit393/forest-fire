@@ -1,4 +1,4 @@
-﻿# Hele backenden + dashboardet:  docker compose up --build
+# Hele backenden + dashboardet:  docker compose up --build
 # Producerne kører på din pc med `npm run send` mod localhost:5683
 
 services:
@@ -50,7 +50,6 @@ services:
     image: eclipse-mosquitto:2
     ports:
       - "1883:1883"   # så `dotnet run` og mosquitto_sub kan nå den fra værten
-      - "9001:9001"   # websockets, til mobilappen
     # laver password-filen (forestfire / mqtt-password) og starter så Mosquitto
     command: sh -c 'rm -f /mosquitto/passwd && mosquitto_passwd -c -b /mosquitto/passwd forestfire mqtt-password && chown mosquitto:mosquitto /mosquitto/passwd && chmod 0700 /mosquitto/passwd && exec mosquitto -c /mosquitto/config/mosquitto.conf'
     volumes:

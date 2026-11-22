@@ -22,22 +22,13 @@ export interface Firefighter {
   receivedAt: string;
 }
 
-// FireAlert fra mqtt-servicen på alerts/{node}, retained
+// en node med brand, ud fra dens nyeste måling
 export interface FireAlert {
-  alertId: string;
   node: string;
-  ts: number;
-  temp?: number;
-  humidity?: number;
-  pm10?: number;
-  pm25?: number;
-  lat?: number;
-  lon?: number;
+  lat: number | null;
+  lon: number | null;
   fireProbability: number;
-  alarm?: boolean;
-  receivedAt?: number;
 }
-
 export const getReadings = (): Promise<Reading[]> =>
   fetch(`${API_URL}/readings?limit=100`).then((r) => r.json());
 
