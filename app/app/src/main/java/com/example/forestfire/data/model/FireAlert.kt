@@ -12,7 +12,7 @@ data class FireAlert(
     val riskPercent: Int get() = (risk * 100).roundToInt()
 }
 
-/** One message on `forest/{zone}/alerts`. */
+/** One message on `alerts/{zone}`. */
 sealed interface AlertMessage {
     data class Active(val alert: FireAlert) : AlertMessage
 

@@ -9,12 +9,12 @@ class TopicsTest {
 
     @Test
     fun alertsTopic() {
-        assertEquals("forest/zone1/alerts", Topics.alerts("zone1"))
+        assertEquals("alerts/rold-skov", Topics.alerts("rold-skov"))
     }
 
     @Test
     fun firefighterTopic() {
-        assertEquals("forest/zone1/firefighters/ff-1", Topics.firefighter("zone1", "ff-1"))
+        assertEquals("firefighters/ff-1/location", Topics.firefighter("rold-skov", "ff-1"))
     }
 
     @Test

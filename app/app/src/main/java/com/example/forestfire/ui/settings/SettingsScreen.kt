@@ -104,7 +104,7 @@ internal fun SettingsContent(
                 Field("Host", form.brokerHost, form.hostError, enabled, KeyboardType.Uri) {
                     onFormChange(form.copy(brokerHost = it))
                 }
-                Field("Port (TLS)", form.brokerPort, form.portError, enabled, KeyboardType.Number, ImeAction.Done) {
+                Field("Port", form.brokerPort, form.portError, enabled, KeyboardType.Number, ImeAction.Done) {
                     onFormChange(form.copy(brokerPort = it))
                 }
                 Text(

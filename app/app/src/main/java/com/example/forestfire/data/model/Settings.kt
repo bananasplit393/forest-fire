@@ -9,6 +9,6 @@ data class Settings(
 ) {
     companion object {
         /** 10.0.2.2 is the development machine as seen from the Android emulator. */
-        val DEFAULT = Settings(zone = "zone1", firefighterId = "ff-1", brokerHost = "10.0.2.2", brokerPort = 8883)
+        val DEFAULT = Settings(zone = "rold-skov", firefighterId = "ff-1", brokerHost = "10.0.2.2", brokerPort = 1883)
     }
 }

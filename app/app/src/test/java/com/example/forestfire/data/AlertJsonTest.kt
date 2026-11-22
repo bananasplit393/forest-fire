@@ -14,18 +14,18 @@ class AlertJsonTest {
 
     @Test
     fun parsesActiveAlert() {
-        val message = parse("""{"active":true,"risk":0.87,"lat":56.1234,"lon":10.5678,"ts":1760870400}""")
+        val message = parse("""{"alarm":true,"fireProbability":0.87,"lat":56.1234,"lon":10.5678,"ts":1760870400}""")
         assertEquals(AlertMessage.Active(FireAlert(0.87, 56.1234, 10.5678, 1760870400)), message)
     }
 
     @Test
     fun parsesClearWithTimestamp() {
-        assertEquals(AlertMessage.Cleared, parse("""{"active":false,"ts":1760871000}"""))
+        assertEquals(AlertMessage.Cleared, parse("""{"alarm":false,"ts":1760871000}"""))
     }
 
     @Test
     fun parsesClearWithoutTimestamp() {
-        assertEquals(AlertMessage.Cleared, parse("""{"active":false}"""))
+        assertEquals(AlertMessage.Cleared, parse("""{"alarm":false}"""))
     }
 
     @Test
@@ -42,16 +42,16 @@ class AlertJsonTest {
 
     @Test
     fun missingFieldsAreNull() {
-        assertNull(parse("""{"risk":0.5,"lat":56.1,"lon":10.2,"ts":1}"""))          // no "active"
-        assertNull(parse("""{"active":true,"risk":0.5,"lat":56.1,"ts":1}"""))       // no "lon"
-        assertNull(parse("""{"active":true,"risk":0.5,"lat":56.1,"lon":10.2}"""))   // no "ts"
+        assertNull(parse("""{"fireProbability":0.5,"lat":56.1,"lon":10.2,"ts":1}"""))          // no "alarm"
+        assertNull(parse("""{"alarm":true,"fireProbability":0.5,"lat":56.1,"ts":1}"""))       // no "lon"
+        assertNull(parse("""{"alarm":true,"fireProbability":0.5,"lat":56.1,"lon":10.2}"""))   // no "ts"
     }
 
     @Test
     fun outOfRangeValuesAreNull() {
-        assertNull(parse("""{"active":true,"risk":1.5,"lat":56.1,"lon":10.2,"ts":1}"""))
-        assertNull(parse("""{"active":true,"risk":0.5,"lat":91.0,"lon":10.2,"ts":1}"""))
-        assertNull(parse("""{"active":true,"risk":0.5,"lat":56.1,"lon":-181.0,"ts":1}"""))
+        assertNull(parse("""{"alarm":true,"fireProbability":1.5,"lat":56.1,"lon":10.2,"ts":1}"""))
+        assertNull(parse("""{"alarm":true,"fireProbability":0.5,"lat":91.0,"lon":10.2,"ts":1}"""))
+        assertNull(parse("""{"alarm":true,"fireProbability":0.5,"lat":56.1,"lon":-181.0,"ts":1}"""))
     }
 
     @Test

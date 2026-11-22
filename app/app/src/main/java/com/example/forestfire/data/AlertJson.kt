@@ -15,11 +15,11 @@ object AlertJson {
         if (text.isEmpty()) return AlertMessage.Cleared
         return try {
             val json = JSONObject(text)
-            if (!json.getBoolean("active")) {
+            if (!json.getBoolean("alarm")) {
                 AlertMessage.Cleared
             } else {
                 val alert = FireAlert(
-                    risk = json.getDouble("risk"),
+                    risk = json.getDouble("fireProbability"),
                     lat = json.getDouble("lat"),
                     lon = json.getDouble("lon"),
                     ts = json.getLong("ts"),
