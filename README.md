@@ -1,4 +1,61 @@
-# Producer test
+# Forest Fire
+
+```
+producers ──CoAP──▶ coap-server ──MQTT──▶ Mosquitto ──▶ API (model.onnx + Postgres)
+                                              ▲   │                         │
+                         mobilapp (ws:9001) ──┘   └── alerts/{node} ◀───────┘ ved brand
+                                                         frontend ──GET──▶ API
+```
+
+| Mappe | Hvad |
+|---|---|
+| `producers/` | Simulerede sensor-noder (TypeScript), sender målinger med CoAP |
+| `coap-server/` | Tager imod CoAP og publicerer på `sensors/{nodeId}/data` |
+| `mqtt/` | Mosquitto-config (`mosquitto.conf`). Den tidligere separate .NET-service er nu flyttet ind i `api/` |
+| `api/` | ASP.NET Core API, kører risikomodellen og gemmer målingerne. Her ligger `docker-compose.yml` |
+| `frontend/` | Dashboard (Vite + React): tabel og kort over målinger og brandmænd |
+| `app/` | Brandmandsappen (Expo / React Native): viser alarmer og sender GPS-position |
+| `smoke_model/` | Træning og eksport af modellen |
+
+## Kør hele systemet
+
+```bash
+# 1. backend + dashboard (Postgres, Mosquitto, coap-server, API, frontend)
+cd api
+docker compose up --build
+
+# 2. i en ny terminal: start producerne
+cd producers
+npm install
+npm run send
+```
+
+- Dashboard: http://localhost:3000
+- API: http://localhost:8081 (fx http://localhost:8081/readings)
+- MQTT: `localhost:1883` og websockets på `localhost:9001`, login `forestfire` / `mqtt-password`
+- CoAP: `udp://localhost:5683`
+
+### Mobilappen
+
+```bash
+cd app
+npm install
+npx expo start
+```
+
+Skriv din pc's IP i `app/config.ts` (telefonen kan ikke bruge `localhost`), og åbn appen med Expo Go. Telefon og pc skal være på samme wifi.
+
+### Frontend uden Docker
+
+```bash
+cd frontend
+npm install
+npm run dev      # http://localhost:3000, API'et fra VITE_API_URL (default http://localhost:8081)
+```
+
+---
+
+## Producer test
 
 Test that the producer sends sensor readings to the CoAP server and that the
 server forwards them to MQTT:
@@ -35,13 +92,10 @@ This starts the MQTT broker on its default port, `1883`. The `-v` flag enables
 verbose logging so you can see connections and MQTT activity.
 
 Alternatively, use the Mosquitto broker from `api/docker-compose.yml`
-(`cd api && cp .env.example .env && docker compose up -d mosquitto`). That
-broker requires a login, so start the CoAP server with `MQTT_USERNAME` and
-`MQTT_PASSWORD` set (values from `api/.env`) and add `-u <user> -P <password>`
-to `mosquitto_sub`. The full stack (`docker compose up --build`) also runs the
-MQTT service in `mqtt/`, which subscribes to `sensors/+/data`, stores every
-reading through the API and publishes a retained `alerts/{nodeId}` on fire.
-See `mqtt/README.md`.
+(`cd api && docker compose up -d mosquitto`). That broker requires a login, so
+start the CoAP server with `MQTT_USERNAME=forestfire` and
+`MQTT_PASSWORD=mqtt-password` and add `-u forestfire -P mqtt-password` to
+`mosquitto_sub`. The full stack (`docker compose up --build`) runs the API (`api/`), which subscribes directly to `sensors/+/data` and `firefighters/+/location`, stores readings and publishes a retained `alerts/{nodeId}` on fire.
 
 Skip this command if a broker is already running on `localhost:1883`. The CoAP
 server needs the broker because it waits for MQTT to acknowledge publication

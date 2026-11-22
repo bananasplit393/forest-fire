@@ -1,19 +1,20 @@
-﻿# Forest Fire – API
+# Forest Fire – API
 
 ```
-ForestFire.Mqtt (../mqtt) ──POST /readings──▶ ForestFire.Api ──▶ risikomodel (model.onnx) ──▶ api-db (PostgreSQL)
+Mosquitto ──SensorData/Location──▶ ForestFire.Api ──▶ risikomodel (model.onnx) ──▶ api-db (PostgreSQL)
+                                       └──▶ FireAlert (alerts/{nodeId}, retained) til Mosquitto
 Dashboard ──GET /readings, GET /firefighters──▶ ForestFire.Api
 ```
 
 Samme opsætning som CoreService i 2026E74: Controllers → Services → EF Core → PostgreSQL.
-API'et har ingen MQTT-kode. Al MQTT ligger i `../mqtt` (se README'en der).
+API'et abonnerer selv direkte på MQTT (`MqttService` og `MqttFireAlertSender` under `src/ForestFire.Api/Mqtt`) og publicerer `FireAlert` ved brand. CORS tillader alle origins, så frontenden kan kalde det.
 
 | Mappe | Indhold |
 |---|---|
 | `src/ForestFire.Api` | C#-koden (ASP.NET Core 9). |
 | `src/ForestFire.Api/Model` | Læg `model.onnx` her. Kopieres med ud ved build. |
 | `deploy/api/` | `Dockerfile` og `Dockerfile.dockerignore`. |
-| `docker-compose.yml` | Hele stakken lokalt: API, database, Mosquitto og mqtt-servicen. |
+| `docker-compose.yml` | Hele stakken lokalt: API, database, Mosquitto, coap-serveren og frontenden. |
 
 ## Endpoints
 
@@ -34,12 +35,13 @@ API'et har ingen MQTT-kode. Al MQTT ligger i `../mqtt` (se README'en der).
 
 ```bash
 cd api
-cp .env.example .env
 docker compose up --build
 ```
 
 - API: http://localhost:8081
-- MQTT (Mosquitto): `localhost:1883`, login fra `.env`
+- Dashboard: http://localhost:3000
+- MQTT (Mosquitto): `localhost:1883` (websockets `9001`), login `forestfire` / `mqtt-password`
+- CoAP: `udp://localhost:5683`
 - Databasen: `localhost:5434` (5433 er bachelor-databasen)
 
 ## Kør API'et direkte (debugging i Rider/VS)
@@ -49,13 +51,13 @@ docker compose up api-db mosquitto
 dotnet run --project src/ForestFire.Api   # http://localhost:5200
 ```
 
-`appsettings.Development.json` peger allerede på databasen. Se `../mqtt/README.md` for at køre mqtt-servicen ved siden af.
+`appsettings.Development.json` peger allerede på databasen og Mosquitto på localhost.
 
 ## Risikomodellen
 
 Modellen trænes i Python og eksporteres med `skl2onnx`. Læg filen i `src/ForestFire.Api/Model/model.onnx` (eller sæt `Model__Path`).
 
-Input skal være én float-tensor med shape `[1, 3]` i rækkefølgen `[temp, humidity, pm25]` (se `RiskModelService`).
+Input skal være én float-tensor med shape `[1, 3]` i rækkefølgen `[temp, humidity, pm25]` (se `RiskModelService`). Mangler en værdi, sendes `NaN`, og modellen udfylder selv med medianen.
 
 ## Databasemigrationer
 

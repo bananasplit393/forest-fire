@@ -1,5 +1,6 @@
-﻿using System.Text.Json.Serialization;
-using ForestFire.Api.Data;
+﻿using ForestFire.Api.Data;
+using ForestFire.Api.Interfaces;
+using ForestFire.Api.Mqtt;
 using ForestFire.Api.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,11 +13,18 @@ builder.Services.AddScoped<SensorReadingService>();
 
 builder.Services.AddSingleton<RiskModelService>();
 
-// seneste position pr. brandmand, sendes hertil af mqtt-servicen
+// seneste position pr. brandmand
 builder.Services.AddSingleton<FirefighterLocationService>();
 
-builder.Services.AddControllers()
-    .AddJsonOptions(o => o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
+builder.Services.AddSingleton<MqttService>();
+builder.Services.AddSingleton<IMqttPublisher>(sp => sp.GetRequiredService<MqttService>());
+builder.Services.AddHostedService(sp => sp.GetRequiredService<MqttService>());
+builder.Services.AddSingleton<IFireAlertSender, MqttFireAlertSender>();
+
+builder.Services.AddControllers();
+
+// så frontenden (anden port) må kalde API'et
+builder.Services.AddCors(o => o.AddDefaultPolicy(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -33,9 +41,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-
+app.UseCors();
 app.MapControllers();
 
 app.Run();
-
-

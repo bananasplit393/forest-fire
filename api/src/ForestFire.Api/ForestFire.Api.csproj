@@ -12,8 +12,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="MQTTnet" Version="4.3.7.1207" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.*" />
-    <!-- risikomodellen (model.onnx, trÃ¦net i Python og eksporteret med skl2onnx) -->
+    <!-- risikomodellen (model.onnx, trænet i Python og eksporteret med skl2onnx) -->
     <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.*" />
   </ItemGroup>
 

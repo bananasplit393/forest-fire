@@ -1,5 +1,5 @@
-﻿# Lokal udvikling / enkelt server:  docker compose up --build
-# Kopiér først .env.example til .env
+﻿# Hele backenden + dashboardet:  docker compose up --build
+# Producerne kører på din pc med `npm run send` mod localhost:5683
 
 services:
   api:
@@ -13,34 +13,19 @@ services:
       ConnectionStrings__Default: Host=api-db;Port=5432;Database=forestfire;Username=forestfire;Password=devpassword
       Database__MigrateOnStartup: "true"
       Model__Path: Model/model.onnx
+      Mqtt__Host: mosquitto
+      Mqtt__Port: "1883"
+      Mqtt__Username: forestfire
+      Mqtt__Password: mqtt-password
     depends_on:
       api-db:
         condition: service_healthy
+      mosquitto:
+        condition: service_started
     restart: unless-stopped
     deploy:
       resources:
         limits: { cpus: "1", memory: 512M }
-
-  # mqtt-servicen (../mqtt), ligesom Edger: lytter på SensorData og FirefighterLocation,
-  # sender dem til api og publicerer FireAlert (retained) ved brand
-  mqtt:
-    build:
-      context: ../mqtt
-      dockerfile: Dockerfile
-    image: forest-fire-mqtt:dev
-    environment:
-      Mqtt__Host: mosquitto
-      Mqtt__Port: "1883"
-      Mqtt__Username: ${MQTT_USERNAME}
-      Mqtt__Password: ${MQTT_PASSWORD}
-      Api__BaseUrl: http://api:8080
-    depends_on:
-      - mosquitto
-      - api
-    restart: unless-stopped
-    deploy:
-      resources:
-        limits: { cpus: "1", memory: 256M }
 
   api-db:
     image: postgres:16
@@ -59,20 +44,45 @@ services:
       retries: 10
     restart: unless-stopped
 
-  # MQTT-brokeren. coap-serveren publicerer SensorData, mqtt-servicen publicerer FireAlert, appen publicerer FirefighterLocation.
+  # MQTT-brokeren. coap-serveren publicerer SensorData, api'et publicerer FireAlert, appen publicerer FirefighterLocation.
   # Config ligger i ../mqtt/mosquitto.conf
   mosquitto:
     image: eclipse-mosquitto:2
     ports:
-      - "1883:1883"   # så coap-serveren, appen og `dotnet run` kan nå den fra værten
-    environment:
-      MQTT_USERNAME: ${MQTT_USERNAME}
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
-    # laver password-filen ud fra .env og starter så Mosquitto
-    command: sh -c 'mosquitto_passwd -c -b /mosquitto/passwd "$$MQTT_USERNAME" "$$MQTT_PASSWORD" && chown mosquitto:mosquitto /mosquitto/passwd && chmod 0700 /mosquitto/passwd && exec mosquitto -c /mosquitto/config/mosquitto.conf'
+      - "1883:1883"   # så `dotnet run` og mosquitto_sub kan nå den fra værten
+      - "9001:9001"   # websockets, til mobilappen
+    # laver password-filen (forestfire / mqtt-password) og starter så Mosquitto
+    command: sh -c 'rm -f /mosquitto/passwd && mosquitto_passwd -c -b /mosquitto/passwd forestfire mqtt-password && chown mosquitto:mosquitto /mosquitto/passwd && chmod 0700 /mosquitto/passwd && exec mosquitto -c /mosquitto/config/mosquitto.conf'
     volumes:
       - ../mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
       - mosquitto-data:/mosquitto/data
+    restart: unless-stopped
+
+  # CoAP-serveren (../coap-server): tager imod målinger fra producerne og publicerer dem på sensors/{nodeId}/data
+  coap-server:
+    build: ../coap-server
+    image: forest-fire-coap:dev
+    ports:
+      - "5683:5683/udp"
+    environment:
+      MQTT_URL: mqtt://mosquitto:1883
+      MQTT_USERNAME: forestfire
+      MQTT_PASSWORD: mqtt-password
+    depends_on:
+      - mosquitto
+    restart: unless-stopped
+
+  # dashboardet (../frontend), bygget og serveret af nginx
+  frontend:
+    build:
+      context: ../frontend
+      args:
+        VITE_API_URL: http://localhost:8081
+    image: forest-fire-frontend:dev
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
     restart: unless-stopped
 
 volumes:

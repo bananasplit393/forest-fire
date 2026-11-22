@@ -29,10 +29,11 @@ ts, temp, humidity, pm25, lat, lon
 UTC: timestamp in sec
 temp: double
 humidity: double (percentage)
-pm10: Concentration of particle matter smaller than 1.0µm
+pm10: Concentration of particle matter smaller than 10µm
 pm25: Concentration of particle matter smaller than 2.5µm 
 lat: latidude, double
 lon: longitude, double
+node: sensor node id, slug of the location name (e.g. rold-skov)
 
 Since the data collection team assembled all sensors into one device we will do the same making one type of producer
 

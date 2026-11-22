@@ -1,11 +1,12 @@
 import { request } from "coap";
-import { produce } from "./main/produce";
+import { fireEnv, produce, summerEnv } from "./main/produce";
 
 const COAP_URL = process.env.COAP_URL ?? "coap://localhost:5683/readings";
 const INTERVAL_MS = Number(process.env.INTERVAL_MS ?? 5000);
+const FIRE_CHANCE = Number(process.env.FIRE_CHANCE ?? 0.05);
 
 async function send() {
-  const reading = await produce();
+  const reading = await produce(Math.random() < FIRE_CHANCE ? fireEnv() : summerEnv());
   const url = new URL(COAP_URL);
 
   const req = request({

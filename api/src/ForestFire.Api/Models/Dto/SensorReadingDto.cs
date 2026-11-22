@@ -32,7 +32,7 @@ public class SensorReadingDto
     public double? Lon { get; set; }
 
 
-    // fra risikomodellen, null hvis den ikke kunne kÃ¸re
+    // fra risikomodellen
     public double? FireProbability { get; set; }
     public bool? IsFire { get; set; }
 

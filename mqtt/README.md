@@ -1,5 +1,7 @@
 # Forest Fire – MQTT
 
+> **Bemærk:** MQTT-håndteringen (`MqttService` og `MqttFireAlertSender`) er flyttet ind i `api/src/ForestFire.Api`, så backenden selv abonnerer direkte på Mosquitto (som i C2-diagrammet). Denne mappe beholdes af historiske årsager, men startes ikke længere i `docker-compose.yml` (`mosquitto.conf` bruges stadig af brokeren).
+
 MQTT-delen af systemet: Mosquitto-brokerens config og `ForestFire.Mqtt`, servicen der står mellem brokeren og API'et.
 Bygget ligesom Edger i 2026E74: en worker (ikke en webapp) med én `MqttService`, der både lytter (`BackgroundService`) og publicerer (`IMqttPublisher`).
 
@@ -7,7 +9,7 @@ Bygget ligesom Edger i 2026E74: en worker (ikke en webapp) med én `MqttService`
 Sensor nodes ──CoAP──▶ coap-server ──sensors/{nodeId}/data──▶ Mosquitto ──▶ ForestFire.Mqtt ──POST /readings──▶ ForestFire.Api
                                                                   ▲               │  ◀── måling med isFire ──┘
                                                                   └─ alerts/{nodeId} (retained), hvis isFire
-Firefighter app + dashboard ◀── alerts/#
+Firefighter app (websockets :9001) ◀── alerts/+
 Firefighter app ──firefighters/{id}/location──▶ Mosquitto ──▶ ForestFire.Mqtt ──PUT /firefighters/{id}──▶ ForestFire.Api
 ```
 
@@ -15,7 +17,7 @@ Firefighter app ──firefighters/{id}/location──▶ Mosquitto ──▶ Fo
 
 ```
 mqtt/
-  mosquitto.conf              brokerens config (login kræves), bruges af api/docker-compose.yml
+  mosquitto.conf              brokerens config (login kræves, websockets på 9001 til appen), bruges af api/docker-compose.yml
   ForestFire.Mqtt.csproj
   Program.cs                  DI, samme opsætning som Edger
   appsettings.json            topics, broker og API-adresse
@@ -38,8 +40,8 @@ mqtt/
 | Topic | Publiceres af | Lyttes på af | QoS | Retained |
 |---|---|---|---|---|
 | SensorData `sensors/{nodeId}/data` | coap-server | ForestFire.Mqtt | 1 | nej |
-| FireAlert `alerts/{nodeId}` | ForestFire.Mqtt | Firefighter app, dashboard (`alerts/#`) | 1 | ja |
-| FirefighterLocation `firefighters/{id}/location` | Firefighter app | ForestFire.Mqtt, dashboard | 0 | nej |
+| FireAlert `alerts/{nodeId}` | ForestFire.Mqtt | Firefighter app (`alerts/+`) | 1 | ja |
+| FirefighterLocation `firefighters/{id}/location` | Firefighter app | ForestFire.Mqtt | 0 | nej |
 
 ```jsonc
 // SensorData
@@ -80,7 +82,6 @@ Hele stakken (broker, API, database og denne service):
 
 ```bash
 cd api
-cp .env.example .env
 docker compose up --build
 ```
 

@@ -27,15 +27,32 @@ export function summerEnv(date: Date = new Date()): SensorMeasurements {
   const pm25 = random(3, 15);
   const pm10 = pm25 + random(2, 10);
 
-  const { lat, lon } = randomLocation();
+  const location = randomLocation();
 
   return {
     temp: round(temp),
     humidity: round(Math.min(100, Math.max(30, humidity))),
     pm10: round(pm10),
     pm25: round(pm25),
-    lat,
-    lon,
+    lat: location.lat,
+    lon: location.lon,
+    node: location.name.toLowerCase().replace(/ +/g, "-"),
+  };
+}
+
+
+/** High temp, low humidity and high PM — values that usually score as fire (p >= 0.8). */
+export function fireEnv(): SensorMeasurements {
+  const location = randomLocation();
+  const pm25 = random(250, 320);
+  return {
+    temp: round(random(50, 60)),
+    humidity: round(random(8, 15)),
+    pm10: round(pm25 + random(30, 60)),
+    pm25: round(pm25),
+    lat: location.lat,
+    lon: location.lon,
+    node: location.name.toLowerCase().replace(/ +/g, "-"),
   };
 }
 

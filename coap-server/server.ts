@@ -7,7 +7,7 @@ const MQTT_URL = process.env.MQTT_URL ?? "mqtt://localhost:1883";
 const MQTT_TOPIC = process.env.MQTT_TOPIC ?? "sensors/{nodeId}/data";
 // node-id til POST /readings, når målingen ikke selv har et "node"-felt
 const DEFAULT_NODE_ID = process.env.DEFAULT_NODE_ID ?? "unknown";
-// login til Mosquitto (samme som MQTT_USERNAME/MQTT_PASSWORD i api/.env). Tomt = anonym, fx `mosquitto -v`
+// login til Mosquitto (forestfire / mqtt-password i api/docker-compose.yml). Tomt = anonym, fx `mosquitto -v`
 const MQTT_USERNAME = process.env.MQTT_USERNAME || undefined;
 const MQTT_PASSWORD = process.env.MQTT_PASSWORD || undefined;
 

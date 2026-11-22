@@ -1,10 +1,11 @@
 export interface SensorMeasurements {
   readonly temp?: number;
   readonly humidity?: number;
-  readonly pm10?: number; // particle Matter < 1.0
-  readonly pm25?: number; // particle matter < 2.5micrometers
+  readonly pm10?: number; // particulate matter < 10 micrometers
+  readonly pm25?: number; // particulate matter < 2.5 micrometers
   readonly lat?: number;
   readonly lon?: number;
+  readonly node?: string;
 }
 
 export interface SensorReading extends SensorMeasurements {
