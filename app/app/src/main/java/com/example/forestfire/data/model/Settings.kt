@@ -8,7 +8,7 @@ data class Settings(
     val brokerPort: Int,
 ) {
     companion object {
-        /** 10.0.2.2 is the development machine as seen from the Android emulator. */
-        val DEFAULT = Settings(zone = "rold-skov", firefighterId = "ff-1", brokerHost = "10.0.2.2", brokerPort = 1883)
+        /** 192.168.0.137 is the PC running the backend on the home network. */
+        val DEFAULT = Settings(zone = "rold-skov", firefighterId = "ff-1", brokerHost = "192.168.0.137", brokerPort = 1883)
     }
 }
