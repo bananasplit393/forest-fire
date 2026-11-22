@@ -8,7 +8,7 @@ data class Settings(
     val brokerPort: Int,
 ) {
     companion object {
-        /** 192.168.0.137 is the PC running the backend on the home network. */
-        val DEFAULT = Settings(zone = "rold-skov", firefighterId = "ff-1", brokerHost = "192.168.0.137", brokerPort = 1883)
+        /** 192.168.137.1 is the laptop running the backend, seen from a phone on its Windows mobile hotspot. */
+        val DEFAULT = Settings(zone = "rold-skov", firefighterId = "ff-1", brokerHost = "192.168.137.1", brokerPort = 1883)
     }
 }
