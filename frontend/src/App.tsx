@@ -26,7 +26,7 @@ export default function App() {
   return (
     <main>
       <h1>Forest Fire</h1>
-      <FireMap readings={readings} firefighters={firefighters} alerts={alerts} />
+      <FireMap readings={readings} firefighters={firefighters} />
       {alerts.length > 0 && (
         <ul className="alerts">
           {alerts.map((a) => (
@@ -57,6 +57,9 @@ export default function App() {
           ))}
         </tbody>
       </table>
+      <footer className="connect">
+        App: host {window.location.hostname}, port 1883, topic demo
+      </footer>
     </main>
   );
 }

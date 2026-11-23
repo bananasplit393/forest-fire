@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using ForestFire.Api.Interfaces;
 using ForestFire.Api.Models;
 
@@ -10,12 +10,14 @@ namespace ForestFire.Api.Mqtt
     {
         private readonly IMqttPublisher mqtt;
         private readonly string Topic;
+        private readonly string DemoTopic;
         private static readonly JsonSerializerOptions jsonOptions = new(JsonSerializerOptions.Web);
 
         public MqttFireAlertSender(IMqttPublisher mqtt, IConfiguration config)
         {
             this.mqtt = mqtt;
             Topic = config["Mqtt:FireAlertTopic"] ?? "alerts/{0}";
+            DemoTopic = config["Mqtt:DemoTopic"] ?? "demo";
         }
 
         public async Task SendAsync(SensorReadingDto reading)
@@ -45,6 +47,8 @@ namespace ForestFire.Api.Mqtt
             try
             {
                 await mqtt.PublishAsync(topic, json, retain: true);
+                // demo: alle alarmer samlet på ét topic
+                await mqtt.PublishAsync(DemoTopic, json, retain: true);
             }
             catch
             {

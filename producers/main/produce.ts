@@ -1,5 +1,5 @@
 import type { SensorMeasurements, SensorReading } from "../interface/sensor";
-import { randomLocation } from "./locations";
+import { locations, randomLocation } from "./locations";
 
 const random = (min: number, max: number) => min + Math.random() * (max - min);
 const round = (value: number, decimals = 1) =>
@@ -43,7 +43,8 @@ export function summerEnv(date: Date = new Date()): SensorMeasurements {
 
 /** High temp, low humidity and high PM — values that usually score as fire (p >= 0.8). */
 export function fireEnv(): SensorMeasurements {
-  const location = randomLocation();
+  // demo: most fires happen in Rold Skov
+  const location = Math.random() < 0.7 ? locations[0]! : randomLocation();
   const pm25 = random(250, 320);
   return {
     temp: round(random(50, 60)),
