@@ -58,7 +58,7 @@ export default function App() {
         </tbody>
       </table>
       <footer className="connect">
-        App: host {import.meta.env.VITE_HOST_IP || window.location.hostname}, port 1883, topic demo
+        App: host {import.meta.env.VITE_HOST_IP || window.location.hostname}, port 1883, zone demo
       </footer>
     </main>
   );

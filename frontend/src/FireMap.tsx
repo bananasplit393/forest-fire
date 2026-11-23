@@ -12,6 +12,10 @@ const CONNECTED_MS = 30_000;
 export default function FireMap({ readings, firefighters }: Props) {
   // kun den nyeste måling (readings er nyeste først)
   const last = readings.find((r) => r.lat != null && r.lon != null);
+  // brande bliver stående, til samme node sender en ny måling
+  const newest = new Map<string, Reading>();
+  for (const r of readings) if (r.node && r.lat != null && r.lon != null && !newest.has(r.node)) newest.set(r.node, r);
+  const fires = [...newest.values()].filter((r) => r.isFire && r.id !== last?.id);
   const connected = firefighters.filter((f) => Date.now() - new Date(f.receivedAt).getTime() < CONNECTED_MS);
 
   return (
@@ -26,6 +30,12 @@ export default function FireMap({ readings, firefighters }: Props) {
           <Popup>{last.node}: {Math.round((last.fireProbability ?? 0) * 100)} %</Popup>
         </CircleMarker>
       )}
+      {fires.map((r) => (
+        <CircleMarker key={r.id} center={[r.lat!, r.lon!]} radius={12}
+          pathOptions={{ color: "red", fillOpacity: 0.6 }}>
+          <Popup>{r.node}: {Math.round((r.fireProbability ?? 0) * 100)} %</Popup>
+        </CircleMarker>
+      ))}
       {connected.map((f) => (
         <CircleMarker key={f.id} center={[f.lat, f.lon]} radius={7} pathOptions={{ color: "blue" }}>
           <Popup>Brandmand {f.id}</Popup>

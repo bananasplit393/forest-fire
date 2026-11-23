@@ -17,7 +17,7 @@ namespace ForestFire.Api.Mqtt
         {
             this.mqtt = mqtt;
             Topic = config["Mqtt:FireAlertTopic"] ?? "alerts/{0}";
-            DemoTopic = config["Mqtt:DemoTopic"] ?? "demo";
+            DemoTopic = config["Mqtt:DemoTopic"] ?? "alerts/demo";
         }
 
         public async Task SendAsync(SensorReadingDto reading)
